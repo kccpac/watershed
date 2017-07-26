@@ -1,28 +1,37 @@
-#include "Point.h"
+#include <iostream>
 #include "Neighbourhood.h"
 
 Neighbourhood::Neighbourhood(){}
 
-Neighbourhood::Neighbourhood(Point *coors, int neigbhourSize, int pitch)
+Neighbourhood::Neighbourhood(HoodPoint *coors, int neigbhourSize, int pitch):Neighbourhood()
 {
 	mTotalSize =  (neigbhourSize > 0)  ? neigbhourSize: 0;
-	mCoors =(Point*) malloc (mTotalSize*sizeof(Point));
-	for (int i=0; i<mTotalSize; i++)
+
+	mCoors = new  HoodPoint[mTotalSize];//(mTotalSize*sizeof(HoodPoint));
+    std::cout << "init start " << mTotalSize << "\n";
+//    memset(mCoors, 0, mTotalSize * sizeof(HoodPoint));
+    int i;
+	for ( i=0; i<mTotalSize; i++)
 	{
-		mCoors[i] = Point(coors[i].getX(), coors[i].getY(), coors[i].getDirection());
+    //    std::cout << "pos " << i << " " <<coors[i].getX() << ", " << coors[i].getY() << ", " << coors[i].getDirection() << "\n";
+		mCoors[i] = HoodPoint(coors[i].getX(), coors[i].getY(), coors[i].getDirection());
+    //    std::cout << "hood id=" << i << "\n";
 	}
+ // delete  mCoors;
 	mPitch = pitch;
 }
 
 Neighbourhood::~Neighbourhood() 
 {
-	if (mCoors) {
-       // delete mCoors;
-		free(mCoors);
-    }
+	//if (mCoors) {
+        delete  [] mCoors;
+ std::cout << "Neighbourhood::~Neighbourhood \n";
+	//	free(mCoors);
+   // }
+mCoors = NULL;
 }
 
-Neighbourhood* Neighbourhood::createInstance(Point *coors, int neigbhourSize, int pitch)
+Neighbourhood* Neighbourhood::createInstance(HoodPoint *coors, int neigbhourSize, int pitch)
 {
     return new Neighbourhood(coors, neigbhourSize,  pitch);
 }
@@ -36,9 +45,9 @@ int Neighbourhood::getNeighbourPosition(int which)
 }
 */
 
-Point Neighbourhood::getNeighbourPosition(int which)
+HoodPoint Neighbourhood::getNeighbourPosition(int which)
 {
-    Point pt;//Point() 
+    HoodPoint pt;//Point() 
 	if (which > mTotalSize || which < 0) 
 		return pt;
 	return	mCoors[which];
